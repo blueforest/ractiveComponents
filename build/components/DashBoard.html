@@ -1,0 +1,129 @@
+<div class="dashboard">
+	<div class="clearfix">
+		<span class="pull-left">
+			<button class="btn btn-primary btn-xl" on-click="popUp"><i class="glyphicon glyphicon-signal"></i></button>
+		</span>
+		<span class="pull-right">
+           <div class="dropdown mr10" style="display: inline">
+                   <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+                        选择
+                    <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                    	{{#dropdownLinks}}
+                        <li role="presentation">
+                        	<a role="menuitem" tabindex="-1" on-click="changeUrl:{{url}}" href="#">{{name}}</a></li>
+                     	{{/dropdownLinks}}
+                    </ul>
+            </div>
+            <button class="btn btn-primary btn-xl mr5">统计</button>
+		</span>
+	</div>
+	<div id="{{chartWrap}}"></div>
+</div>
+
+
+
+
+<style>
+</style>
+
+<script>
+function formatter(response){
+    	var _data=response.data;
+    	if(!_data){
+    		return null;
+    	}
+    	var series=[];
+    	for(var _key in _data){
+    		var _name=_key;
+    		var _items=_data[_key];
+    		var _oneSeries={};
+    		_oneSeries.name=_name;
+    		var _stData=[];
+			$.each(_items,function(i,element){
+				if(element.value){
+					var _stItem={};
+					_stItem.y=parseFloat(element.value);
+					_stItem.x=parseInt(element._collectDate_);
+					_stData.push(_stItem);
+				}
+			});
+			_oneSeries.data=_stData;
+			series.push(_oneSeries);
+    	}
+    	return series;
+    }
+var chart;
+
+component.exports = {
+	oninit:function(){
+		//加载图表
+		this.on('loadChart',function(){
+			var _this = this;
+			var _ajax = _this.get('ajax');
+			//console.log(formatter(res))
+			//new CLineChart('chartWrap', {series:formatter(res)}, true);
+
+			if(_this.get('ajax').url){
+                $.ajax({
+                    url:_ajax.url,
+                    type:_ajax.type?_ajax.type:"GET",
+                    dataType:_ajax.dataType?_ajax.dataType:"json",
+                    data:_ajax.data
+                }).done(function(response){
+                    if(response.success){
+                    	if(!chart){
+                    		var chartWrap = _this.get('chartWrap')
+                        	chart = new CLineChart(chartWrap, {series:formatter(response)}, true);
+                     	}else{
+                     		var series=formatter(response);
+                     		$.each(series,function(i,element){
+                     			if(i<chart.series.length){
+                     				chart.series[i].update(element);
+                     			}
+                     			else{
+                     				chart.addSeries(element);
+                     			}
+                     		})
+                     		chart.series = formatter(response);
+                     	}
+            			
+                    }
+                });
+            }
+		});
+		
+
+
+		this.on('changeUrl',function(e,url){
+			event.original.preventDefault();
+			console.log(url)
+		});
+
+		this.on('popUp',function(){
+			//$("#pop-up-modal").modal('show');
+		});
+
+		
+	},
+	oncomplete:function(){
+		var _this = this;
+		_this.fire('loadChart');
+	
+	},
+	data:function(){
+		return {
+			dropdownLinks:[],
+			displayOptions:[{value:1,text:"1小时"},{value:3,text:"3小时"},{value:6,text:"6小时"},{value:12,text:"12小时"},{value:24,text:"1天"},{value:168,text:"7天"},{value:720,text:"30天"},{value:"my",text:"自定义"}],
+			ajax:{
+	            url:"",
+	            type:"",
+	            dataType:"",
+	            data:""
+        	},
+        	chartWrap:""
+		}
+	}
+}
+</script>

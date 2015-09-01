@@ -1,0 +1,54 @@
+<table class="table">
+    <tbody>
+            <tr>
+                {{#columns}}
+                    <td>{{.label}}</td>
+                {{/columns}}
+            </tr>
+            {{#rows:rowIndex}}
+                <tr>
+                    {{#columns:columnIndex}}
+                        <td>
+                            {{rows[rowIndex][.field]}}
+                        </td>
+                    {{/columns}}
+                </tr>
+            {{/rows}}
+    </tbody>
+</table>
+<style>
+
+</style>
+<script>
+component.exports= {
+    onint:function(){
+        this.on('load',function(){
+            var _ajax = this.get('ajax');
+            var _this = this;
+            if(this.get('ajax').url){
+                $.ajax({
+                    url:_ajax.url,
+                    type:_ajax.type?_ajax.type:"GET",
+                    dataType:_ajax.dataType?_ajax.dataType:"json",
+                    data:_ajax.data
+                }).done(function(response){
+                    if(response.success){
+                        _this.set('rows',response.items)
+                    }
+                });
+            }
+        });
+        this.fire('load')
+    },
+    data: {
+        ajax:{
+            url:"",
+            type:"",
+            dataType:"",
+            data:""
+        },
+        columns: [],
+        rows: []
+    }
+}
+</script>

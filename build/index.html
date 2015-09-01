@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang='en-GB'>
+<head>
+	<meta charset='utf-8'>
+	<title>Ractive.js load plugin</title>
+
+</head>
+
+<body>
+	<table width="100%">
+		<tr><td width="50%"><div id="j-table" ></div></td>
+			<td></td></tr>
+		<tr>
+			<td><div id="j-table2" ></div></td>
+			<td></td>
+		</tr>
+	</table>
+
+
+<div id="j-modalchart"></div>
+</body>
+<script src="bz/highcharts.js"></script>
+<script src="bz/complex-linechart.js"></script>
+<script src="bz/areacharts.js"></script>
+<script src="bundle.js"></script>
+<script src="lib/ractive.js"></script> 
+<script type="text/javascript">
+
+var grid = new rComponents.Grid({
+	el: document.querySelector( '#j-table' ),
+    append: true,
+    data: {
+
+		columns: [
+		{field: 'username', label: 'UserName'},
+		{field: 'name', label: 'Name'},
+		{field: 'email', label: 'Email'}
+		],
+		rows: [
+		{username: 'admin', name: 'Admin', email: 'admin@example.com'},
+		{username: 'tg', name: 'Thadius Gorge', email: 'tg@example.com'},
+		{username: 'f999', name: 'Frank', email: 'frank@example.com'}
+		]
+    }
+});
+
+
+var grid = new rComponents.Grid({
+	el: document.querySelector( '#j-table2' ),
+    append: true,
+    data: {
+
+		columns: [
+		{field: 'username', label: '用户名'},
+		{field: 'name', label: '姓名'},
+		{field: 'email', label: '邮箱'}
+		],
+		rows: [
+		{username: 'seven', name: 'Admin', email: 'admin@example.com'},
+		{username: 'siwei', name: 'Thadius Gorge', email: 'tg@example.com'},
+		{username: 'blue@126.com', name: 'Frank', email: 'frank@example.com'}
+		]
+    }
+});
+
+
+
+
+</script>
+</html>
